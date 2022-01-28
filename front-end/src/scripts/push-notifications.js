@@ -41,7 +41,7 @@ function sendNotification() {
  * 
  */
 function registerServiceWorker() {
-  navigator.serviceWorker.register("/sw.js").then(function(swRegistration) {
+  navigator.serviceWorker.register("/push/sw.js").then(function(swRegistration) {
     //you can do something with the service wrker registration (swRegistration)
   });
 }

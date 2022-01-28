@@ -1,13 +1,15 @@
 const subscriptions = {};
 var crypto = require("crypto");
 const webpush = require("web-push");
+const fs = require("fs");
+const vapidKeys = JSON.parse(fs.readFileSync("./src/vapid-keys.json", "utf8"));
+console.log("vapidKeys", vapidKeys);
 
-const vapidKeys = {
-  privateKey: "bdSiNzUhUP6piAxLH-tW88zfBlWWveIx0dAsDO66aVU",
-  publicKey: "BIN2Jc5Vmkmy-S3AUrcMlpKxJpLeVRAfu9WBqUbJ70SJOCWGCGXKY-Xzyh7HDr6KbRDGYHjqZ06OcS3BjD7uAm8"
-};
-
-webpush.setVapidDetails("mailto:example@yourdomain.org", vapidKeys.publicKey, vapidKeys.privateKey);
+webpush.setVapidDetails(
+  "mailto:underdog@chatlands.com",
+  vapidKeys.publicKey,
+  vapidKeys.privateKey
+);
 
 function createHash(input) {
   const md5sum = crypto.createHash("md5");
@@ -16,14 +18,22 @@ function createHash(input) {
 }
 
 function handlePushNotificationSubscription(req, res) {
+  // console.log("handlePushNotificationSubscription", req, res);
   const subscriptionRequest = req.body;
   const susbscriptionId = createHash(JSON.stringify(subscriptionRequest));
   subscriptions[susbscriptionId] = subscriptionRequest;
   res.status(201).json({ id: susbscriptionId });
 }
 
-function sendPushNotification(req, res) {
-  const subscriptionId = req.params.id;
+setInterval(() => {
+  console.log(subscriptions);
+  for (var id of Object.keys(subscriptions)) {
+    sendPushNotification(id);
+  }
+}, 20000);
+
+function sendPushNotification(id) {
+  const subscriptionId = id;
   const pushSubscription = subscriptions[subscriptionId];
   webpush
     .sendNotification(
@@ -33,14 +43,12 @@ function sendPushNotification(req, res) {
         text: "HEY! Take a look at this brand new t-shirt!",
         image: "/images/jason-leung-HM6TMmevbZQ-unsplash.jpg",
         tag: "new-product",
-        url: "/new-product-jason-leung-HM6TMmevbZQ-unsplash.html"
+        url: "/new-product-jason-leung-HM6TMmevbZQ-unsplash.html",
       })
     )
-    .catch(err => {
+    .catch((err) => {
       console.log(err);
     });
-
-  res.status(202).json({});
 }
 
-module.exports = { handlePushNotificationSubscription, sendPushNotification };
+module.exports = { handlePushNotificationSubscription };
