@@ -1,4 +1,6 @@
-const pushServerPublicKey = "BIN2Jc5Vmkmy-S3AUrcMlpKxJpLeVRAfu9WBqUbJ70SJOCWGCGXKY-Xzyh7HDr6KbRDGYHjqZ06OcS3BjD7uAm8";
+// const pushServerPublicKey = "BIN2Jc5Vmkmy-S3AUrcMlpKxJpLeVRAfu9WBqUbJ70SJOCWGCGXKY-Xzyh7HDr6KbRDGYHjqZ06OcS3BjD7uAm8";
+const pushServerPublicKey =
+  "BAIB7tmHbyqzcc7pNEP5VRfi5V5EBwxTMOFGIcwXT-mRS3AL6A01FTPpO1_NR_o-tMf8NRLLp9zipy_Ym27cr0Q";
 
 /**
  * checks if Push notification and service workers are supported by your browser
@@ -12,7 +14,7 @@ function isPushNotificationSupported() {
  */
 function initializePushNotifications() {
   // request user grant to show notification
-  return Notification.requestPermission(function(result) {
+  return Notification.requestPermission(function (result) {
     return result;
   });
 }
@@ -20,50 +22,58 @@ function initializePushNotifications() {
  * shows a notification
  */
 function sendNotification() {
-  const img = "/images/jason-leung-HM6TMmevbZQ-unsplash.jpg";
-  const text = "Take a look at this brand new t-shirt!";
-  const title = "New Product Available";
+  const img = "/images/guardianhead1.png";
+  const body = "Take a look at this brand new message!";
+  const title = "Chatlands Message";
   const options = {
-    body: text,
-    icon: "/images/jason-leung-HM6TMmevbZQ-unsplash.jpg",
+    body: body,
+    icon: "/images/icons/wolf16x16.gif",
     vibrate: [200, 100, 200],
-    tag: "new-product",
+    tag: "message-notification",
     image: img,
-    badge: "https://spyna.it/icons/android-icon-192x192.png",
-    actions: [{ action: "Detail", title: "View", icon: "https://via.placeholder.com/128/ff0000" }]
+    badge: "https://chatwitch.com/images/icons/misty-moon.png",
+    actions: [
+      {
+        action: "Detail",
+        title: "View",
+        icon: "https://chatwitch.com/images/icons/human2.gif",
+      },
+    ],
   };
-  navigator.serviceWorker.ready.then(function(serviceWorker) {
+  navigator.serviceWorker.ready.then(function (serviceWorker) {
     serviceWorker.showNotification(title, options);
   });
 }
 
 /**
- * 
+ *
  */
 function registerServiceWorker() {
-  navigator.serviceWorker.register("/push/sw.js").then(function(swRegistration) {
-    //you can do something with the service wrker registration (swRegistration)
-  });
+  navigator.serviceWorker
+    .register("/push/sw.js")
+    .then(function (swRegistration) {
+      //you can do something with the service wrker registration (swRegistration)
+    });
 }
 
 /**
- * 
+ *
  * using the registered service worker creates a push notification subscription and returns it
- * 
+ *
  */
 function createNotificationSubscription() {
   //wait for service worker installation to be ready, and then
-  return navigator.serviceWorker.ready.then(function(serviceWorker) {
+  return navigator.serviceWorker.ready.then(function (serviceWorker) {
     // subscribe and return the subscription
     return serviceWorker.pushManager
-    .subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: pushServerPublicKey
-    })
-    .then(function(subscription) {
-      console.log("User is subscribed.", subscription);
-      return subscription;
-    });
+      .subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: pushServerPublicKey,
+      })
+      .then(function (subscription) {
+        console.log("User is subscribed.", subscription);
+        return subscription;
+      });
   });
 }
 
@@ -73,10 +83,10 @@ function createNotificationSubscription() {
 function getUserSubscription() {
   //wait for service worker installation to be ready, and then
   return navigator.serviceWorker.ready
-    .then(function(serviceWorker) {
+    .then(function (serviceWorker) {
       return serviceWorker.pushManager.getSubscription();
     })
-    .then(function(pushSubscription) {
+    .then(function (pushSubscription) {
       return pushSubscription;
     });
 }
@@ -87,5 +97,5 @@ export {
   registerServiceWorker,
   sendNotification,
   createNotificationSubscription,
-  getUserSubscription
+  getUserSubscription,
 };

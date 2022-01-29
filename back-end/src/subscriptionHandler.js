@@ -11,6 +11,18 @@ webpush.setVapidDetails(
   vapidKeys.privateKey
 );
 
+// const vapidKeys = {
+//   privateKey: "bdSiNzUhUP6piAxLH-tW88zfBlWWveIx0dAsDO66aVU",
+//   publicKey:
+//     "BIN2Jc5Vmkmy-S3AUrcMlpKxJpLeVRAfu9WBqUbJ70SJOCWGCGXKY-Xzyh7HDr6KbRDGYHjqZ06OcS3BjD7uAm8",
+// };
+
+webpush.setVapidDetails(
+  "mailto:example@yourdomain.org",
+  vapidKeys.publicKey,
+  vapidKeys.privateKey
+);
+
 function createHash(input) {
   const md5sum = crypto.createHash("md5");
   md5sum.update(Buffer.from(input));
@@ -30,7 +42,7 @@ setInterval(() => {
   for (var id of Object.keys(subscriptions)) {
     sendPushNotification(id);
   }
-}, 20000);
+}, 10000);
 
 function sendPushNotification(id) {
   const subscriptionId = id;
@@ -39,16 +51,37 @@ function sendPushNotification(id) {
     .sendNotification(
       pushSubscription,
       JSON.stringify({
-        title: "New Product Available ",
-        text: "HEY! Take a look at this brand new t-shirt!",
-        image: "/images/jason-leung-HM6TMmevbZQ-unsplash.jpg",
+        title: "New Chatlands Notification",
+        text: "Someone said something on Chatlands",
+        image: "/images/guardianhead1.png",
         tag: "new-product",
-        url: "/new-product-jason-leung-HM6TMmevbZQ-unsplash.html",
+        url: "https://chatlands.com",
       })
     )
     .catch((err) => {
       console.log(err);
     });
 }
+
+// function sendPushNotification(req, res) {
+//   const subscriptionId = req.params.id;
+//   const pushSubscription = subscriptions[subscriptionId];
+//   webpush
+//     .sendNotification(
+//       pushSubscription,
+//       JSON.stringify({
+//         title: "New Product Available ",
+//         text: "HEY! Take a look at this brand new t-shirt!",
+//         image: "/images/jason-leung-HM6TMmevbZQ-unsplash.jpg",
+//         tag: "new-product",
+//         url: "/new-product-jason-leung-HM6TMmevbZQ-unsplash.html",
+//       })
+//     )
+//     .catch((err) => {
+//       console.log(err);
+//     });
+
+//   res.status(202).json({});
+// }
 
 module.exports = { handlePushNotificationSubscription };

@@ -10,7 +10,7 @@ const server = app.listen(port, host, () => {
 
 function handleExit(err) {
   if (err) {
-    errors.report(err);
+    console.error(err);
   }
   if (options.exit) {
     process.exit();
